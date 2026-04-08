@@ -29,7 +29,7 @@ base^n → 2^n
 
 ### ❌ Para armazenamento
 
-* Não é útil como representação de bit
+* Não representa um "bit completo" isoladamente
 * Um bit precisa representar **2 estados (0 e 1)**
 
 ### ✅ Para cálculos
@@ -96,12 +96,14 @@ Todo sistema numérico posicional funciona com potências da sua base.
 > Um Byte é um conjunto de **8 bits**
 
 ```
-00000000 → 11111111 → 10100010 → 11100011 ...
+00000000 → 11111111  
+Exemplos: 10100010 • 11100011
 ```
 
 ### 📊 Características
 
 * Total de possibilidades: **256 (0 → 255)**
+* 8 bits → 2⁸ = 256 combinações possíveis
 * Foi padronizado com 8 bits porque:
 
   * Permite representar letras (maiúsculas e minúsculas)
