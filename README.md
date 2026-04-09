@@ -339,6 +339,416 @@ __________
 
 ---
 
+# SOLID
+
+## 🧠 Conceito fundamental
+
+> **SOLID** é um conjunto de princípios que ajudam a criar códigos **mais organizados, flexíveis e fáceis de manter**
+
+---
+
+## 📌 Os 5 princípios
+
+* **S** → Uma única responsabilidade.
+* **O** → Extensível, mas não modificável.
+* **L** → Substituição segura de classes filhas por pais.
+* **I** → Interfaces específicas, não generalizadas.
+* **D** → Dependa de abstrações, não de implementações.
+
+---
+
+# S — Single Responsibility Principle
+
+## 🧠 Conceito
+
+> **Uma classe deve ter apenas um motivo para mudar.** Ela não deve ser/fazer muitas coisas ao mesmo tempo, deve fazer apenas aquilo que ela se propõe a ser.
+
+👉 Ou seja: deve ter **uma única responsabilidade**
+
+---
+
+## ❌ Exemplo incorreto
+Uma classe Relatorio que gera os dados, formata para PDF e envia por email.
+
+```java
+class RelatorioFinanceiro {
+    public void gerarRelatorio() {
+        // Buscar dados
+        // Gerar PDF
+        // Enviar e-mail
+    }
+}
+```
+
+👉 Problema:
+
+* Muitas responsabilidades em uma única classe
+
+---
+
+## ✅ Exemplo correto
+Uma classe para gerar os dados, uma classe para gerar o PDF e uma classe para enviar email.
+
+```java
+class DadosRelatorio {
+  // Entidade com as informações
+}
+
+// Gateways / Interfaces / Contratos
+interface IExportadorPdf {
+    byte[] exportar(DadosRelatorio dados);
+}
+
+interface IEmailService {
+    void enviar(String destinatario, byte[] conteudo);
+}
+
+// Implementação Real das Interfaces
+class ExportadorPDF implements IExportadorPdf {
+    public byte[] exportar(DadosRelatorio dados) {
+        // Gerando pdf...
+    }
+}
+
+class ServicoEmail implements IEmailService {
+    public void enviar(String destinatario, byte[] conteudo) {
+        // Enviando email...
+    }
+}
+
+// Relatório com a responsabilidade correta
+class RelatorioFinanceiro {
+    public void gerarRelatorio(IDadosProvider provider, IExportadorPdf exportador, IEmailService email) {
+        DadosRelatorio dados = provider.coletarDados();
+        byte[] pdf = exportador.exportar(dados);
+        email.enviar("email", pdf);
+    }
+}
+```
+
+---
+
+## ✅ Resumo
+
+* Cada classe faz **uma coisa só**
+* Facilita manutenção
+* Facilita testes
+
+---
+
+# O — Open/Closed Principle
+
+## 🧠 Conceito
+
+> **Classes devem estar abertas para extensão, mas fechadas para modificação.** Devemos ser capazes de adicionar uma nova funcionalidade/comportamento ao código sem precisar mexer no código original que já funciona (através de interfaces e herança).
+
+👉 Você adiciona comportamento sem alterar código existente
+
+---
+
+## ❌ Exemplo incorreto
+Um sistema de hipotético de pagamentos que aceita pagamento por PIX e DÉBITO, funciona perfeitamente, e está da seguinte maneira:
+
+```java
+class ProcessadorPagamento {
+    public void processar(String metodoPagamento) {
+        if (metodoPagamento.equals("PIX")) {
+            // processando PIX...
+        } else if (metodoPagamento.equals("DEBITO")) {
+            // processando DÉBITO...
+        }
+    }
+}
+```
+
+👉 Problema:
+
+* Toda nova regra exige modificar a classe (na prática, um novo if para cada novo caso adicionado)
+
+---
+
+## ✅ Exemplo correto
+Um código correto deveria utilizar uma interface em comum com um método 'pagar()' que seria implementado por cada método de pagamento individualmente, sem a necessidade de alterar o código principal.
+
+```java
+interface MetodoPagamento {
+    void pagar();
+}
+
+class PagamentoPix implements MetodoPagamento {
+    public void pagar() {}
+}
+
+class PagamentoDebito implements MetodoPagamento {
+    public void pagar() {}
+}
+
+// Novo método adicionado sem precisar alterar o código original
+class PagamentoBoleto implements MetodoPagamento {
+    public void pagar() {}
+}
+
+class ProcessadorPagamento {
+    public void processar(MetodoPagamento metodo) {
+        metodo.pagar();
+    }
+}
+```
+
+---
+
+## 💡 Benefício
+
+* Novo método de pagamento = nova classe
+* Nenhuma alteração no código existente
+
+---
+
+## ✅ Resumo
+
+* Evita `if/else` gigantes
+* Usa polimorfismo
+* Código mais extensível
+
+---
+
+# L — Liskov Substitution Principle
+
+## 🧠 Conceito
+
+> **Subclasses devem poder substituir suas classes base sem quebrar o comportamento.**
+
+---
+
+## ❌ Exemplo incorreto
+
+```java
+class Pagamento {
+    public void processar(double valor) {
+        // processa pagamento
+    }
+}
+
+class CartaoCredito extends Pagamento {
+    @Override
+    public void processar(double valor) {
+        System.out.println("Processando no cartão: " + valor);
+    }
+}
+
+class Boleto extends Pagamento {
+    @Override
+    public void processar(double valor) {
+        throw new UnsupportedOperationException("Boleto não é processado na hora");
+    }
+}
+```
+
+---
+
+## 🚨 Problema
+
+```java
+public void finalizarCompra(Pagamento pagamento) {
+    pagamento.processar(100);
+}
+```
+
+👉 Funciona com CartaoCredito
+
+👉 Quebra com Boleto ❌
+
+---
+
+## 💡 Insight
+
+> O problema não é o código — é o **modelo errado de herança**
+
+* Esse tipo de erro aparece MUITO quando você:
+  
+  * Junta coisas parecidas mas com comportamentos diferentes
+  * Cria uma classe base genérica demais
+
+---
+
+## ✅ Exemplo correto
+
+```java
+interface Pagamento {
+    void iniciar(double valor);
+}
+
+interface PagamentoInstantaneo extends Pagamento {
+    void processar(double valor);
+}
+
+class CartaoCredito implements PagamentoInstantaneo {
+    public void iniciar(double valor) {}
+    public void processar(double valor) {
+        System.out.println("Pago na hora");
+    }
+}
+
+class Boleto implements Pagamento {
+    public void iniciar(double valor) {
+        System.out.println("Gerando boleto...");
+    }
+}
+```
+
+---
+
+## ✅ Resumo
+
+* Herança deve respeitar comportamento
+* Subclasse não pode “quebrar expectativas”
+
+---
+
+# I — Interface Segregation Principle
+
+## 🧠 Conceito
+
+> **Nenhuma classe deve ser forçada a implementar métodos que não usa.** Faz mais sentido possuirmos interfaces específicas do que interfaces generalizadas.
+
+---
+
+## ❌ Exemplo incorreto
+
+```java
+interface ProcessadorPagamento {
+    void validarDados();
+    void processar();
+    void gerarLinhaDigitavel(); // Só faz sentido para Boleto
+    void validarParcelamento(); // Só faz sentido para Cartão
+}
+```
+
+---
+
+### 🚨 Problema
+
+```java
+class PagamentoBoleto implements ProcessadorPagamento {
+    public void validarDados() {}
+    public void processar() {}
+    public void gerarLinhaDigitavel() {}
+    public void validarParcelamento() {
+        // Não faz sentido um boleto validar parcelamento
+    }
+}
+```
+
+---
+
+## ✅ Exemplo correto
+
+```java
+interface MetodoPagamento {
+    void processar();
+}
+
+interface PagamentoComCodigo {
+    void gerarLinhaDigitavel();
+}
+
+interface PagamentoParcelavel {
+    void validarParcelamento();
+}
+
+class PagamentoBoleto implements MetodoPagamento, PagamentoComCodigo {
+    public void processar() {}
+    public void gerarLinhaDigitavel() {}
+}
+
+class PagamentoCartaoCredito implements MetodoPagamento, PagamentoParcelavel {
+    public void processar() {}
+    public void validarParcelamento() {}
+}
+```
+
+---
+
+## ✅ Resumo
+
+* Interfaces pequenas e específicas
+* Evita métodos inúteis
+* Código mais coeso
+
+---
+
+# D — Dependency Inversion Principle
+
+## 🧠 Conceito
+
+> **Dependa de abstrações, não de implementações concretas.** Módulos de alto nível *(regra negócio)* não devem depender de módulos de baixo nível *(implementação concreta)*.
+
+---
+
+## ❌ Exemplo incorreto
+
+```java
+class PasswordReminder {
+    private PostgresConnection dbConnection;
+
+    public PasswordReminder(PostgresConnection connection) {
+        this.dbConnection = connection;
+    }
+}
+```
+
+---
+
+## 🚨 Problema
+
+* Forte acoplamento
+* Difícil trocar o banco de dados
+
+---
+
+## ✅ Exemplo correto
+
+```java
+interface IDatabaseConnection {
+    void connect();
+}
+
+class PostgresConnection implements IDatabaseConnection {
+    public void connect() {}
+}
+
+class MySqlConnection implements IDatabaseConnection {
+    public void connect() {}
+}
+
+class PasswordReminder {
+    private IDatabaseConnection dbConnection;
+
+    public PasswordReminder(IDatabaseConnection connection) {
+        this.dbConnection = connection;
+    }
+}
+```
+
+---
+
+## 💡 Uso
+
+```java
+IDatabaseConnection db = new PostgresConnection();
+PasswordReminder reminder = new PasswordReminder(db);
+```
+
+---
+
+## ✅ Resumo
+
+* Baixo acoplamento
+* Fácil troca de implementação
+* Melhor para testes (mock)
+
+---
+
 # Object Calisthenics
 
 ## Regra 9 (Evite Getters e Setters)
