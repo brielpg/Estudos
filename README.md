@@ -751,6 +751,173 @@ PasswordReminder reminder = new PasswordReminder(db);
 
 # Object Calisthenics
 
+## Regra 1 (Um nível de indentação por método)
+
+> Cada método deve ter **apenas um nível de indentação**.
+
+---
+
+### 🧠 O que isso significa?
+
+Você deve evitar código com muitos blocos aninhados (`if`, `for`, `while`, etc.).
+
+👉 Se começou a “ir muito pra direita”, é um sinal claro de que:
+
+* O método está fazendo **coisas demais**
+* Precisa ser **quebrado em métodos menores**
+
+---
+
+### ❌ Exemplo incorreto
+
+```java
+public void processarPedido(Pedido pedido) {
+    if (pedido != null) {
+        if (pedido.estaPago()) {
+            for (Item item : pedido.getItens()) {
+                if (item.temEstoque()) {
+                    enviarItem(item);
+                }
+            }
+        }
+    }
+}
+```
+
+🚨 Problema:
+
+* 3 níveis de indentação
+* Difícil de ler
+* Difícil de manter
+
+---
+
+### ✅ Exemplo correto
+
+```java
+public void processarPedido(Pedido pedido) {
+    validarPedido(pedido);
+    processarItens(pedido);
+}
+
+private void validarPedido(Pedido pedido) {
+    if (pedido == null || !pedido.estaPago()) {
+        throw new IllegalArgumentException();
+    }
+}
+
+private void processarItens(Pedido pedido) {
+    for (Item item : pedido.getItens()) {
+        processarItem(item);
+    }
+}
+
+private void processarItem(Item item) {
+    if (item.temEstoque()) {
+        enviarItem(item);
+    }
+}
+```
+
+---
+
+### 💡 Benefícios
+
+* Código mais **legível**
+* Métodos menores e mais claros
+* Facilita testes
+
+---
+
+### ✅ Resumo
+
+* Evite “escadas” de `if/for`
+* Extraia métodos
+* Cada método deve fazer **uma coisa só**
+
+---
+
+## Regra 2 (Não use a palavra-chave `else`)
+
+> Evite o uso de `else` para deixar o fluxo mais claro e direto.
+
+---
+
+### 🧠 O que isso significa?
+
+Ao invés de usar `if/else`, você deve:
+
+* Usar **retornos antecipados** (*early return, fail fast*)
+* Separar responsabilidades
+* Evitar bifurcações complexas
+
+---
+
+### ❌ Exemplo incorreto
+
+```java
+public void processarPagamento(Pagamento pagamento) {
+    if (pagamento.estaValido()) {
+        realizarPagamento(pagamento);
+    } else {
+        throw new IllegalArgumentException("Pagamento inválido");
+    }
+}
+```
+
+---
+
+### ✅ Exemplo correto
+
+```java
+public void processarPagamento(Pagamento pagamento) {
+    if (!pagamento.estaValido()) {
+        throw new IllegalArgumentException("Pagamento inválido");
+    }
+
+    realizarPagamento(pagamento);
+}
+```
+
+---
+
+### 🔥 Exemplo mais interessante
+
+```java
+// ❌ Com else
+if (usuario.isAdmin()) {
+    liberarAcessoTotal();
+} else {
+    liberarAcessoLimitado();
+}
+
+// ✅ Sem else
+if (usuario.isAdmin()) {
+    liberarAcessoTotal();
+    return;
+}
+
+liberarAcessoLimitado();
+```
+
+---
+
+### 💡 Benefícios
+
+* Fluxo mais **linear**
+* Menos complexidade mental
+* Evita código “aninhado”
+
+---
+
+### ✅ Resumo
+
+* Prefira retornos antecipados
+* Evite bifurcações desnecessárias
+* Deixe o fluxo mais direto
+
+---
+
 ## Regra 3 (Encapsule todos os primitivos e Strings)
 
 > Tipos primitivos e Strings devem ser substituídos por **objetos que representem o domínio**.
