@@ -757,16 +757,16 @@ PasswordReminder reminder = new PasswordReminder(db);
 
 ---
 
-## Regra principal
+### Regra principal
 * ❌ Não use getters para decisões de negócio fora da classe
 * ❌ Não use setters genéricos
 * ✅ Prefira métodos com intenção clara que contenham a regra de negócio
 
 ---
 
-## Exemplo focado em **GETTER**
+### Exemplo focado em **GETTER**
 
-### 🧠 Contexto
+#### 🧠 Contexto
 
 Imagine que temos um `Pedido` com um `status`.
 Queremos enviar um e-mail quando o pedido estiver **ENVIADO**.
@@ -793,9 +793,9 @@ public boolean estaEnviado() {
 
 ---
 
-## Exemplo focado em **SETTER**
+### Exemplo focado em **SETTER**
 
-### 🧠 Contexto
+#### 🧠 Contexto
 
 Imagine que temos um `Product` com um `price`.
 Não devemos permitir que qualquer parte do sistema altere o preço diretamente.
@@ -820,9 +820,9 @@ public void applyDiscount(double value) {
 
 ---
 
-## Exemplo combinando **GETTER + SETTER** (boa prática)
+### Exemplo combinando **GETTER + SETTER** (boa prática)
 
-### 🧠 Contexto
+#### 🧠 Contexto
 
 Queremos criar um `Pedido` com um `status` inicial e depois aprová-lo.
 O cliente do objeto não precisa manipular diretamente o status nem perguntar os detalhes internos.
