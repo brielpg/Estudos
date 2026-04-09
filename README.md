@@ -312,11 +312,11 @@ public static void funcao2() {
 ### 📦 Stack durante execução:
 
 ```
-__________
-| funcao2 |
-| funcao1 |
-|  main   |
-|_________|
+┌─────────┐
+│ funcao2 │
+│ funcao1 │
+│  main   │
+└─────────┘
 ```
 
 👉 Quando `funcao2` termina:
@@ -336,6 +336,328 @@ __________
 | Armazena       | Funções, variáveis locais | Objetos              |
 | Tempo de vida  | Curto                     | Mais longo           |
 | Tamanho        | Limitado                  | Maior                |
+
+---
+
+# 📘 Guia rápido JPA — Relacionamentos
+
+---
+
+## 🧠 Como saber quem deve possuir a FK (dono da relação)?
+
+### Regra mental mais importante:
+
+> 👉 **“Quem precisa de quem para existir?”**
+
+### Exemplo: Cliente vs Pedido
+
+* ✅ Cliente pode existir sem pedido
+* ❌ Pedido NÃO pode existir sem cliente
+
+➡️ Logo: **Pedido possui a FK (`cliente_id`)**
+
+---
+
+## 🔁 Tipos de relacionamento
+
+---
+
+## 🔹 OneToMany (1:N)
+
+### 🧩 Conceito
+
+Um cliente pode ter vários pedidos
+
+```
+  One	        Many
+	      ┌── Pedido1
+Cliente ──┼── Pedido2
+	      └── Pedido3
+```
+
+### 💻 Código
+
+```java
+public class Cliente {
+  @OneToMany(mappedBy = "cliente")
+  private List<Pedido> pedidos;
+
+}
+```
+
+📌 **Importante:**
+
+* `mappedBy` indica que **Cliente NÃO é dono da relação**
+
+---
+
+## 🔹 ManyToOne (N:1)
+
+### 🧩 Conceito
+
+Vários pedidos pertencem a um cliente
+
+```
+ Many	        One
+Pedido1 ──┐
+Pedido2 ──┼── Cliente
+Pedido3 ──┘
+```
+
+### 💻 Código
+
+```java
+public class Pedido {
+  @ManyToOne
+  @JoinColumn(name = "cliente_id")
+  private Cliente cliente;
+}
+```
+
+📌 **Importante:**
+* `@JoinColumn` indica que **aqui está o dono da relação!** *(quem possui a fk)*
+
+---
+
+## 🔹 OneToOne (1:1)
+
+### 🧩 Conceito
+
+Um registro para um registro
+
+Exemplo:
+
+* Usuário ↔ Subscription
+
+### 💻 Exemplo
+
+```java
+public class Subscription {
+  @OneToOne
+  @JoinColumn(name = "user_id")
+  private User user;
+}
+
+public class User {
+  @OneToOne(mappedBy = "user")
+  private Subscription subscription;
+}
+```
+
+---
+
+## 🔹 ManyToMany (N:N)
+
+### 🧩 Conceito
+
+Muitos para muitos → precisa de uma **tabela intermediária (join table)**
+
+Exemplo:
+
+* Pedido ↔ Produto
+
+> Um pedido pode ter vários produtos
+> Um produto pode estar em vários pedidos
+
+---
+
+### 🔗 Representação
+
+```
+Pedido1 ──┐
+Pedido2 ──┼── Pedido_Produto ──┼── Produto1
+Pedido3 ──┘                    └── Produto2
+```
+
+---
+
+## 💻 Exemplo
+
+```java
+public class Pedido {
+  @ManyToMany
+  @JoinTable(
+    name = "pedido_produto",
+    joinColumns = @JoinColumn(name = "pedido_id"),
+    inverseJoinColumns = @JoinColumn(name = "produto_id")
+  )
+  private List<Produto> produtos = new ArrayList<>();
+
+}
+
+public class Produto {
+  @ManyToMany(mappedBy = "produtos")
+  private List<Pedido> pedidos = new ArrayList<>();
+
+}
+```
+
+---
+
+## 📌 Importante
+
+* `@JoinTable` → define a **tabela intermediária**
+* `joinColumns` → FK da entidade atual (Pedido)
+* `inverseJoinColumns` → FK da outra entidade (Produto)
+
+---
+
+## 🔧 mappedBy
+
+### 🧩 O que é?
+
+Indica **o lado inverso da relação** (quem NÃO tem a FK)
+
+---
+
+### 💡 Regra simples:
+
+> 👉 `mappedBy` fica na entidade que **NÃO possui a FK**
+
+---
+
+### ⚠️ Atenção importante
+
+O valor do `mappedBy`:
+
+* ✔️ Deve ser o **nome do atributo Java**
+* ❌ NÃO é o nome da coluna no banco
+
+---
+
+### 💻 Exemplo completo
+
+```java
+public class Pedido {
+  @ManyToOne
+  @JoinColumn(name = "cliente_id")
+  private Cliente cliente;
+
+}
+
+public class Cliente {
+  @OneToMany(mappedBy = "cliente")
+  private List<Pedido> pedidos;
+
+}
+```
+
+📌 `"cliente"` → nome do atributo na classe `Pedido`
+
+---
+
+### 🚨 Erro comum
+
+```
+mappedBy reference an unknown target entity property
+```
+
+➡️ Significa que o nome no `mappedBy` está errado
+
+---
+
+### 🤯 Dica importante
+
+Você **NÃO é obrigado** a mapear os dois lados
+
+```java
+// ✔️ Isso funciona
+public class Pedido {
+  @ManyToOne
+  @JoinColumn(name = "cliente_id")
+  private Cliente cliente;
+
+}
+
+// ❌ Não precisa disso
+public class Cliente {
+  @OneToMany(mappedBy = "cliente")
+  private List<Pedido> pedidos;
+}
+```
+
+---
+
+## 🔗 JoinColumn
+
+### 🧩 O que faz?
+
+Define **onde fica a FK**
+
+---
+
+### 💡 Regra de ouro:
+
+> 👉 Quem tem `@JoinColumn` = **dono da relação**
+
+---
+
+### 💻 Exemplo
+
+```java
+@ManyToOne
+@JoinColumn(name = "cliente_id")
+private Cliente cliente;
+```
+
+---
+
+### 🗄️ Isso gera no banco:
+
+```sql
+cliente_id BIGINT
+FOREIGN KEY (cliente_id) REFERENCES cliente(id)
+```
+
+---
+
+## 🔗 JoinTable
+
+### 🧩 Quando usar?
+
+Quando **não existe FK direta** → precisa de tabela intermediária
+
+---
+
+### 💻 Exemplo
+
+```java
+@ManyToMany
+@JoinTable(
+    name = "pedido_produto",
+    joinColumns = @JoinColumn(name = "pedido_id"),
+    inverseJoinColumns = @JoinColumn(name = "produto_id")
+)
+private List<Produto> produtos;
+```
+
+---
+
+### 🗄️ Isso gera:
+
+Tabela `pedido_produto`
+
+```sql
+pedido_id
+produto_id
+```
+
+---
+
+### 💡 Tradução mental
+
+* `joinColumns` → FK da entidade atual
+* `inverseJoinColumns` → FK da outra entidade
+
+---
+
+## 🧠 Resumo
+
+* ✔️ Quem tem `@JoinColumn` → **dono da relação**
+* ✔️ `mappedBy` → lado inverso *(sem fk)*
+* ✔️ FK fica em quem **não pode existir sozinho**
+* ✔️ `ManyToMany` → sempre tem tabela intermediária
+* ✔️ `mappedBy` usa **nome do atributo Java**
 
 ---
 
