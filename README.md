@@ -166,6 +166,179 @@ Mais significativo   Menos significativo
 
 ---
 
+# Stack vs Heap
+
+## 🧠 Conceito fundamental
+
+> A memória de um programa é dividida em regiões com responsabilidades diferentes.
+
+As duas principais são:
+
+* **Stack (Pilha)** → execução de métodos
+* **Heap (Monte)** → armazenamento de objetos
+
+---
+
+## ⚖️ Diferença principal
+
+> Stack gerencia **execução**, Heap gerencia **dados**
+
+* Stack → controla o fluxo do programa
+* Heap → guarda os dados que vivem por mais tempo
+
+---
+
+## 📦 Stack (Pilha)
+
+> Estrutura de dados do tipo **LIFO (Last In, First Out)**
+
+👉 O último que entra é o primeiro que sai
+
+---
+
+### 📊 Características
+
+* ⚡ Mais rápida
+* 📏 Tamanho limitado (definido pelo SO)
+* 🧹 Limpeza automática (movimento do Stack Pointer)
+* 📚 Armazena:
+
+  * chamadas de função/método
+  * parâmetros
+  * variáveis locais
+  * tipos primitivos (dependendo da linguagem)
+
+---
+
+### 🧱 Stack Frame
+
+> Cada chamada de função cria um **Stack Frame**
+
+```
+__________
+|         |
+| funcao2 | ← último a entrar (sai primeiro)
+| funcao1 |
+|  main   |
+|_________|
+```
+
+* Cada função tem seu próprio contexto
+* Quando a função termina:
+
+  * seu frame é removido
+  * suas variáveis locais desaparecem
+
+---
+
+### ⚠️ Stack Overflow
+
+> Ocorre quando a Stack ultrapassa seu limite
+
+Exemplo comum:
+
+```java
+public void recursaoInfinita() {
+    recursaoInfinita();
+}
+```
+
+👉 Cada chamada adiciona um novo frame até estourar a memória
+
+---
+
+## 🗂️ Heap
+
+> Região de memória usada para **alocação dinâmica**
+
+---
+
+### 📊 Características
+
+* 🐢 Mais lenta que a Stack
+* 📦 Armazena objetos e instâncias
+* 📈 Cresce mais que a Stack (limitada pela RAM)
+* 🔄 Dados não seguem uma ordem definida (não é pilha)
+* 🧹 Gerenciamento/Limpeza dos objetos na memória
+  
+  * **Java, C#, Python** → Garbage Collector (automático)
+  * **C, C++** → Gerenciamento Manual
+
+---
+
+## 🔗 Relação entre Stack e Heap
+
+> A Stack não guarda objetos diretamente — ela guarda **referências para a Heap**
+
+### 🧮 Exemplo
+
+```java
+public void exemplo() {
+    int x = 10;                // Stack
+    Produto p = new Produto(); // referência na Stack, objeto na Heap
+}
+```
+
+---
+
+### 📐 Representação
+
+```
+STACK                    HEAP
+-----                    -----
+x = 10                   (valor direto)
+
+p -----------┐           Produto { ... }
+             └---------> (objeto na memória)
+```
+
+---
+
+## 🧠 Fluxo de execução
+
+```java
+public static void main(String[] args) {
+    funcao1();
+}
+
+public static void funcao1() {
+    funcao2();
+}
+
+public static void funcao2() {
+}
+```
+
+### 📦 Stack durante execução:
+
+```
+__________
+| funcao2 |
+| funcao1 |
+|  main   |
+|_________|
+```
+
+👉 Quando `funcao2` termina:
+
+* ela sai da stack
+* volta para `funcao1`
+
+---
+
+## ⚖️ Comparação direta
+
+| Característica | Stack                     | Heap                 |
+| -------------- | ------------------------- | -------------------- |
+| Estrutura      | Pilha (LIFO)              | Livre                |
+| Velocidade     | Mais rápida               | Mais lenta           |
+| Gerenciamento  | Automático                | Automático ou manual |
+| Armazena       | Funções, variáveis locais | Objetos              |
+| Tempo de vida  | Curto                     | Mais longo           |
+| Tamanho        | Limitado                  | Maior                |
+
+---
+
 # Object Calisthenics
 
 ## Regra 9 (Evite Getters e Setters)
