@@ -751,6 +751,142 @@ PasswordReminder reminder = new PasswordReminder(db);
 
 # Object Calisthenics
 
+## Regra 3 (Encapsule todos os primitivos e Strings)
+
+> Tipos primitivos e Strings devem ser substituídos por **objetos que representem o domínio**.
+
+---
+
+### Regra principal
+
+* ❌ Não use `String`, `int`, `double` diretamente para representar conceitos importantes
+* ❌ Não deixe validações espalhadas pelo sistema
+* ✅ Crie **Value Objects** com significado e regras de negócio
+* ✅ Garanta que os dados já nasçam **válidos**
+
+---
+
+### Exemplo com **String**
+
+#### 🧠 Contexto
+
+Temos um `Usuario` com um email.
+
+```java
+// ❌ Forma incorreta: primitivo sem significado
+class Usuario {
+    private String email;
+}
+```
+
+👉 Problema:
+
+* Qualquer string pode ser atribuída
+* Validação pode ficar espalhada pelo sistema (caso mais de um objeto no sistema utilize um email)
+
+---
+
+```java
+// ✅ Forma correta: Value Object
+class Email {
+    private String email;
+
+    public Email(String email) {
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("Email inválido");
+        }
+        this.email = email;
+    }
+
+    public String getValue() {
+        return email;
+    }
+}
+
+class Usuario {
+    private Email email;
+}
+
+class Funcionario {
+    private Email email;
+}
+```
+
+👉 Benefício:
+
+* Email **sempre válido**
+* Regra centralizada
+
+---
+
+### Exemplo com **número**
+
+#### 🧠 Contexto
+
+Um produto tem um preço.
+
+```java
+// ❌ Forma incorreta
+class Produto {
+    private double preco;
+}
+```
+
+---
+
+```java
+// ✅ Forma correta
+class Preco {
+    private double valor;
+
+    public Preco(double valor) {
+        if (valor < 0) {
+            throw new IllegalArgumentException("Preço não pode ser negativo");
+        }
+        this.valor = valor;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+}
+
+class Produto {
+    private Preco preco;
+}
+```
+
+---
+
+### 💡 Insight
+
+> Primitivos são "burros". Objetos carregam **comportamento + regra + significado**.
+
+---
+
+### ⚖️ Quando aplicar
+
+👉 Use quando:
+
+* Existe **regra de validação**
+* O dado tem **significado no domínio**
+* Você quer evitar erros comuns
+
+👉 Evite quando:
+
+* É algo trivial (ex: contador interno, loop, índice)
+
+---
+
+### ✅ Resumo
+
+* Enriquece o modelo de domínio
+* Centraliza validações
+* Evita estados inválidos
+* Deixa o código mais orientado a objetos
+
+---
+
 ## Regra 9 (Evite Getters e Setters)
 
 > Objetos devem proteger seu estado e expor comportamentos, não dados.
