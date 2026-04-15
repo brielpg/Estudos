@@ -1,3 +1,57 @@
+# 📑 Sumário
+
+## 🧱 Fundamentos da Computação
+- [Bits & Bytes](#bits--bytes)
+
+    - [Bit](#-bit-binary-digit--b)
+    - [Byte](#-byte--b)
+- [Sistema Binário](#-sistema-binário-base-2)
+
+
+## ⚙️ Memória
+- [Stack vs Heap](#stack-vs-heap)
+
+  - [Stack](#-stack-pilha)
+  - [Heap](#-heap)
+
+
+## 🏗️ Modelagem
+- [JPA — Relacionamentos](#-guia-rápido-jpa--relacionamentos)
+
+    - [OneToMany (1:N)](#-onetomany-1n)
+    - [ManyToOne (N:1)](#-manytoone-n1)
+    - [OneToOne (1:1)](#-onetoone-11)
+    - [ManyToMany (N:N)](#-manytomany-nn)
+    - [mappedBy](#-mappedby)
+    - [JoinColumn](#-joincolumn)
+    - [JoinTable](#-jointable)
+
+
+## 🧠 Paradigmas de Programação
+- [Imperativo](#-paradigma-imperativo)
+- [Declarativo](#-paradigma-declarativo)
+- [Procedural](#-paradigma-procedural)
+- [Orientado a Objetos](#-programação-orientada-a-objetos-oop)
+- [Funcional](#-programação-funcional)
+
+
+## 🧩 Boas Práticas e Design de Código
+- [SOLID](#solid)
+
+    - [Single Responsibility Principle](#s--single-responsibility-principle)
+    - [Open/Closed Principle](#o--openclosed-principle)
+    - [Liskov Substitution Principle](#l--liskov-substitution-principle)
+    - [Interface Segregation Principle](#i--interface-segregation-principle)
+    - [Dependency Inversion Principle](#d--dependency-inversion-principle)
+- [Object Calisthenics](#object-calisthenics)
+
+    - [Regra 1 (identação)](#regra-1-um-nível-de-indentação-por-método)
+    - [Regra 2 (else)](#regra-2-não-use-a-palavra-chave-else)
+    - [Regra 3 (encapsulamento de tipos primitivos/String)](#regra-3-encapsule-todos-os-primitivos-e-strings)
+    - [Regra 9 (getters e setters)](#regra-9-evite-getters-e-setters)
+
+---
+
 # Bits & Bytes
 
 ## 🧠 Conceito fundamental
