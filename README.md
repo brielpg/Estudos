@@ -661,6 +661,361 @@ produto_id
 
 ---
 
+# Paradigmas da Programação
+
+---
+
+## 🧠 Conceito fundamental
+
+> Paradigmas são **formas diferentes de pensar e estruturar código**.
+
+👉 Eles definem **como você resolve problemas**, não apenas a sintaxe.
+👉 **“Paradigma é o jeito de pensar antes de codar”**
+
+---
+
+## 📊 Resumo visual
+
+```
+Paradigmas
+│
+├── Imperativo (como fazer)
+│   ├── Procedural
+│   └── Orientado a Objetos (POO)
+│
+└── Declarativo (o que fazer)
+    ├── Funcional
+    └── Lógico
+```
+
+---
+
+## Imperativo *(como fazer)*
+
+> Você descreve **como o programa deve fazer algo**, passo a passo.
+
+* **Procedural** → baseado em procedimentos/funções (ex: C)
+* **Orientado a Objetos (POO)** → organiza em objetos (ex: Java, C++)
+
+## Declarativo *(o que fazer)*
+
+> Você descreve **o que quer obter**, sem especificar os passos detalhados.
+
+* **Funcional** → baseado em funções puras (ex: Haskell)
+* **Lógico** → baseado em regras (ex: Prolog)
+
+---
+
+# 🔹 Paradigma Imperativo
+
+---
+
+## 🧠 Conceito fundamental
+
+> Você escreve **cada passo que o programa deve executar**
+
+👉 “Controle total do passo a passo”
+
+---
+
+## 📊 Explicação estruturada
+
+* Usa:
+
+  * variáveis mutáveis
+  * loops (`for`, `while`)
+  * condicionais (`if`)
+
+---
+
+```java
+int soma = 0;
+for (int i = 1; i <= 3; i++) {
+    soma += i;
+}
+```
+
+---
+
+## ✅ Resumo
+
+* Imperativo funciona bem para controle fino
+* Quanto mais cresce → mais complexo fica
+* Controle total
+* Muito usado
+* Pode virar código bagunçado se mal estruturado
+
+---
+
+# 🔹 Paradigma Declarativo
+
+---
+
+## 🧠 Conceito fundamental
+
+> Você diz **o que quer**, não como fazer
+
+👉 “Descreva o resultado, não o processo”
+
+---
+
+## 📊 Explicação estruturada
+
+* Muito usado em:
+
+  * SQL
+  * Streams
+  * HTML
+
+---
+
+```sql
+SELECT SUM(valor) FROM vendas;
+```
+
+```java
+List<Integer> pares = lista.stream()
+    .filter(i -> i % 2 == 0)
+    .toList();
+```
+
+---
+
+## 🔁 Comparação direta
+
+| Imperativo  | Declarativo  |
+| ----------- | ------------ |
+| Como fazer  | O que fazer  |
+| Mais código | Mais simples |
+
+---
+
+## ✅ Resumo
+
+* Declarativo reduz complexidade
+* Abstrai detalhes
+* Aumenta produtividade
+* Foco no resultado
+* Menos código
+* Mais legível
+
+---
+
+# 🔸 Paradigma Procedural
+
+---
+
+## 🧠 Conceito fundamental
+
+> É o imperativo organizado em **funções (procedimentos)**
+
+👉 “Quebre o problema em funções”
+
+---
+
+## 📊 Explicação estruturada
+
+* Divide código em:
+
+  * funções
+  * métodos
+* Evita repetição
+
+---
+
+```java
+// ❌ Exemplo incorreto
+int soma = 0;
+for (int i = 1; i <= 10; i++) {
+    soma += i;
+}
+System.out.println(soma);
+soma = 0;
+for (int i = 1; i <= 5; i++) {
+    soma += i;
+}
+System.out.println(soma);
+
+// 🚨 Problema
+// * Código duplicado
+// * Difícil manutenção
+
+
+// ✅ Exemplo correto
+public static int somar(int limite) {
+    int soma = 0;
+    for (int i = 1; i <= limite; i++) {
+        soma += i;
+    }
+    return soma;
+}
+System.out.println(somar(10));
+System.out.println(somar(5));
+```
+
+---
+
+## 🔁 Comparação direta
+
+| Antes           | Depois              |
+| --------------- | ------------------- |
+| Código repetido | Função reutilizável |
+
+---
+
+## ✅ Resumo
+
+* Funções que reduzem duplicação
+* Melhora na organização
+* Facilidade em testes
+* Base do código moderno
+* Reutilização
+* Mais organizado que imperativo puro
+
+---
+
+# 🔸 Programação Orientada a Objetos (OOP)
+
+---
+
+## 🧠 Conceito fundamental
+
+> Modela o sistema como **objetos com estado e comportamento**
+
+👉 “Quem tem o dado, faz a ação”
+
+---
+
+## 📊 Explicação estruturada
+
+* Conceitos principais:
+
+  * Classe
+  * Objeto
+  * Encapsulamento
+  * Herança
+  * Polimorfismo
+
+---
+
+```java
+// ❌ Exemplo incorreto
+class Pedido {
+    public String status;
+}
+
+if (pedido.status.equals("PAGO")) {
+    enviarEmail();
+}
+
+// 🚨 Problema
+// * Regra fora do objeto
+// * Quebra encapsulamento
+
+
+// ✅ Exemplo correto
+class Pedido {
+    private String status;
+  
+    public boolean estaPago() {
+        return status.equals("PAGO");
+    }
+}
+
+if (pedido.estaPago()) {
+    enviarEmail();
+}
+```
+
+---
+
+## 🔁 Comparação direta
+
+| Errado           | Correto               |
+| ---------------- | --------------------- |
+| Dados expostos   | Comportamento interno |
+| Lógica espalhada | Lógica encapsulada    |
+
+---
+
+## ✅ Resumo
+
+* Centraliza regras
+* Facilita manutenção
+* Modela o mundo real
+* Encapsula regras
+* Muito usado em sistemas grandes
+
+---
+
+# 🔸 Programação Funcional
+
+---
+
+## 🧠 Conceito fundamental
+
+> Baseado em **funções puras e dados imutáveis**
+
+👉 “Não mude dados, crie novos”
+
+---
+
+## 📊 Explicação estruturada
+
+* Funções puras:
+
+  * mesmo input → mesmo output
+* Sem efeitos colaterais
+* Imutabilidade
+
+---
+
+```java
+// ❌ Exemplo incorreto
+int total = 0;
+public void adicionar(int valor) {
+    total += valor;
+}
+
+// 🚨 Problema
+// * Estado global
+// * Difícil prever comportamento
+// * Bugs em concorrência
+
+
+// ✅ Exemplo correto
+public int somar(int a, int b) {
+    return a + b;
+}
+
+// Ou com Stream:
+int soma = List.of(1,2,3)
+    .stream()
+    .mapToInt(i -> i)
+    .sum();
+```
+
+---
+
+## 🔁 Comparação direta
+
+| Mutável        | Imutável           |
+| -------------- | ------------------ |
+| altera estado  | retorna novo valor |
+| difícil prever | previsível         |
+
+---
+
+## ✅ Resumo
+
+* Imutabilidade = menos bugs
+* Sem estado compartilhado = mais seguro
+* Código previsível
+* Ideal para concorrência
+* Muito usado com Streams
+
+---
+
 # SOLID
 
 ## 🧠 Conceito fundamental
