@@ -27,6 +27,15 @@
     - [JoinTable](#-jointable)
 
 
+## ️ Banco de Dados
+- [ACID](#acid)
+
+    - [Atomicity](#a--atomicity)
+    - [Consistency](#c--consistency)
+    - [Isolation](#i--isolation)
+    - [Durability](#d--durability)
+
+
 ## 🧠 Paradigmas de Programação
 - [Imperativo](#-paradigma-imperativo)
 - [Declarativo](#-paradigma-declarativo)
@@ -714,6 +723,118 @@ produto_id
 * ✔️ `mappedBy` usa **nome do atributo Java**
 
 ---
+
+# ACID
+
+## 🧠 Conceito fundamental
+
+> **ACID** é um conjunto de **4 garantias** que fazem com que operações no banco sejam **seguras, previsíveis e confiáveis**.
+
+👉 **"Transações precisam funcionar corretamente mesmo com erros, concorrência e falhas."**
+👉 **"Ou tudo acontece certo, ou nada acontece, e ninguém interfere no meio."**
+
+---
+
+## 📌 As 4 garantias
+
+* **A**tomicity → Tudo ou nada dentro da transação
+* **C**onsistency → Dados sempre válidos, `o banco sai de um estado válido para outro estado válido`
+* **I**solation → Transações independentes, `dependendo do nível de isolamento`
+* **D**urability → Dados persistentes após commit
+
+---
+
+### 📊 Visual simples:
+
+```
+BEGIN TRANSACTION
+   ↓
+Executa operações
+   ↓
+Tudo deu certo? → COMMIT ✅
+Algo falhou?    → ROLLBACK ❌
+```
+
+---
+
+## ❌ Exemplo incorreto
+
+```sql
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;
+-- ERRO acontece aqui
+UPDATE contas SET saldo = saldo + 100 WHERE id = 2;
+```
+
+🚨 Problema:
+
+* O dinheiro saiu da conta 1
+* Mas não entrou na conta 2
+
+---
+
+## ✅ Exemplo correto
+
+```sql
+BEGIN;
+
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;
+UPDATE contas SET saldo = saldo + 100 WHERE id = 2;
+
+COMMIT;
+
+-- 👉 Se algo falhar:
+ROLLBACK;
+```
+
+---
+
+## ✅ Resumo:
+
+* Transações são seguras (Atomicity)
+* Dados permanecem válidos (Consistency)
+* Concorrência é controlada (Isolation)
+* Dados persistem (Durability)
+
+---
+
+# A — Atomicity
+
+> **Ou todas as suas operações são bem-sucedidas, ou nenhuma é aplicada.** Se alguma parte falhar, toda a transação é desfeita para manter o banco de dados consistente.
+
+* **Commit:** Transação completa com sucesso
+* **Rollback:** Desfaz qualquer alteração parcial em caso de falha
+
+---
+
+# C — Consistency
+
+> **O banco de dados deve permanecer em um estado válido antes e depois de uma transação.**
+
+* Regras e restrições *(PK, FK, UNIQUE, triggers)* são respeitadas
+* É revertida caso, violar qualquer uma dessas regras.
+
+---
+
+# I — Isolation
+
+> **Garante que transações concorrentes não causem inconsistências, controlando o nível de visibilidade entre elas.** As alterações feitas por uma transação não são visíveis para outras até que sejam confirmadas.
+
+* Evita **dirty reads**, leitura de dados não comprometidos
+* Evita **non-repeatable reads**, mudanças de dados entre duas leituras
+* Evita **phantom reads**, novas linhas aparecem durante uma transação
+* Nem sempre totalmente isoladas, depende do nível de isolamento *(READ COMMITTED, REPEATABLE READ, SERIALIZABLE)*
+* Garante que o resultado final seja equivalente a uma execução sequencial
+
+---
+
+# D — Durability
+
+> **Após o commit, as alterações serão salvas permanentemente, mesmo em caso de falhas.**
+
+* Implementado via Write-Ahead Logging *(WAL)*, flush em disco ou replicação
+
+---
+
 
 # Paradigmas da Programação
 
