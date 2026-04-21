@@ -27,13 +27,14 @@
     - [JoinTable](#-jointable)
 
 
-## ️ Banco de Dados
+## ️Banco de Dados
 - [ACID](#acid)
 
     - [Atomicity](#a--atomicity)
     - [Consistency](#c--consistency)
     - [Isolation](#i--isolation)
     - [Durability](#d--durability)
+- [Transaction](#transaction)
 
 
 ## 🧠 Paradigmas de Programação
@@ -835,6 +836,128 @@ ROLLBACK;
 
 ---
 
+# Transaction
+
+## 🧠 Conceito fundamental
+
+> Uma **transação** é um **conjunto de operações no banco que deve acontecer como uma única unidade**.
+
+👉 Aplica as propriedades [**ACID**](#acid)  
+👉 Deve ser finalizada com **COMMIT** ou **ROLLBACK**
+
+* **COMMIT** → salva tudo
+* **ROLLBACK** → desfaz tudo
+
+---
+
+## 🔄 Fluxo básico de uma transação
+
+```sql
+BEGIN;
+
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;
+UPDATE contas SET saldo = saldo + 100 WHERE id = 2;
+
+COMMIT;
+```
+
+Ou, em caso de erro:
+
+```sql
+ROLLBACK;
+```
+
+---
+
+## ❌ Exemplo incorreto
+
+Transferência sem transação:
+
+```sql
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;
+
+-- ERRO AQUI (ex: queda de sistema)
+
+UPDATE contas SET saldo = saldo + 100 WHERE id = 2;
+```
+
+---
+
+## 🚨 Problema
+
+💥 O dinheiro some
+
+* Conta 1 → perdeu 100
+* Conta 2 → não recebeu
+* Banco → inconsistente
+
+👉 Isso quebra a **consistência do sistema**
+
+---
+
+## ✅ Exemplo correto
+
+Usando transação:
+
+```sql
+BEGIN;
+
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;
+UPDATE contas SET saldo = saldo + 100 WHERE id = 2;
+
+COMMIT;
+```
+
+Ou com erro:
+
+```sql
+BEGIN;
+
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;
+
+-- ERRO DETECTADO
+
+ROLLBACK;
+```
+
+👉 Resultado: nada é aplicado → banco continua correto
+
+---
+
+## 💻 Exemplo fora do SQL
+
+Exemplo conceitual em código:
+
+```js
+try {
+  beginTransaction();
+
+  debitar(conta1, 100);
+  creditar(conta2, 100);
+
+  commit();
+} catch (e) {
+  rollback();
+}
+```
+
+---
+
+## ✅ Resumo
+
+* Transação = **grupo de operações indivisível**
+* Sempre termina em:
+
+  * ✅ COMMIT
+  * ❌ ROLLBACK
+* Base: **ACID**
+* Evita:
+
+  * Dados inconsistentes
+  * Perda de informação
+  * Problemas de concorrência
+
+---
 
 # Paradigmas da Programação
 
