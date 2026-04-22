@@ -5,7 +5,12 @@
 
     - [Bit](#-bit-binary-digit--b)
     - [Byte](#-byte--b)
-- [Sistema Binário](#-sistema-binário-base-2)
+    - [Sistema Binário](#-sistema-binário-base-2)
+- [CPU](#cpu)
+- [Core (Núcleo)](#core-núcleo)
+- [Thread](#thread)
+- [Frequência GHz](#frequência-ghz)
+- [Cache](#cache)
 
 
 ## ⚙️ Memória
@@ -227,6 +232,116 @@ Mais significativo   Menos significativo
 * Sistema binário usa base 2
 * Tudo é construído com **potências de 2**
 * `2⁰` não serve para armazenamento, mas é essencial para cálculo
+
+---
+
+# CPU
+
+> É um motor que **executa instruções** do computador. Ele busca, interpreta e executa instruções em sequência extremamente rápida.
+
+👉 A CPU sempre tenta pegar o dado mais próximo antes de ir para a memória mais lenta (Registradores → L1 → L2 → L3 → RAM).
+
+```
+RAM
+ ↓
+Cache (L3 → L2 → L1)
+ ↓
+Registradores
+ ↓
+Busca (Fetch)
+ ↓
+Decodificação (Decode)
+ ↓
+Execução (Execute)
+```
+
+* Fetch
+
+  * Busca instrução
+* Decode
+
+  * Decodifica os bits da instrução de uma forma que o processador entenda
+* Execute
+
+  * Executa instrução
+
+---
+
+# Core (núcleo)
+
+> É uma unidade física dentro da CPU capaz de **executar instruções de forma independente**.
+
+* Executa instruções de verdade
+* Trabalhar em paralelo com outros cores
+* Contém:
+  * Unidade de execução (ALU, FPU)
+  * Registradores
+  * Pipeline de execução
+  * Cache próprio
+
+---
+
+# Thread
+
+> É um **fluxo de execução** dentro de um processo.
+
+Existem dois casos:
+
+* 1 core → 1 thread executando por vez
+* 1 core → 2 threads compartilham recursos
+
+📌 Importante:
+
+* Threads compartilham recursos do mesmo core, então não há ganho linear.
+* Threads melhoram aproveitamento do core, mas não duplicam performance.
+  * Não dobra performance
+  * Reduz desperdício de recursos
+  * O core usa melhor o tempo ocioso
+  * Enquanto uma thread espera memória, outra executa
+
+📌 Ganho real:
+
+* Geralmente 10% a 40%, depende do tipo de tarefa
+
+🚨 Problema
+
+* Recursos do core são compartilhados
+* Se ambas threads exigirem CPU pesada → não há ganho real
+
+---
+
+# Frequência (GHz)
+
+> É a frequência de ciclos que um processador trabalha por segundo
+
+* 1 GHz = 1 bilhão de ciclos por segundo
+* Mas **1 ciclo ≠ 1 instrução**
+  * uma instrução pode levar vários ciclos
+  * ou várias instruções podem ocorrer em 1 ciclo
+
+Modos de operação:
+
+* Base clock (frequência padrão)
+* Turbo boost (frequência temporária maior)
+
+---
+
+# Cache
+
+> **É uma memória extremamente rápida que guarda dados próximos da CPU para evitar acesso lento à RAM.**
+
+```
+  L1  ↑  Mais próximo do núcleo, mais rápido
+  L2  |
+  L3  |
+```
+
+* Cache de Dados
+
+  * números necessários para fazer um cálculo, ou resultados de operações
+* Cache de Instruções
+
+  * armazena as instruções
 
 ---
 
