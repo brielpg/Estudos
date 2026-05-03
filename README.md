@@ -11,6 +11,12 @@
 - [Thread](#thread)
 - [Frequência GHz](#frequência-ghz)
 - [Cache](#cache)
+- [Kernel](#kernel)
+- [Modos de Operação (Kernel vs User)](#modos-de-operacao-kernel-vs-user)
+
+  - [User Mode](#user-mode-modo-usuario)
+  - [Kernel Mode](#kernel-mode-modo-privilegiado)
+  - [System Calls](#system-calls)
 
 
 ## ⚙️ Memória
@@ -342,6 +348,81 @@ Modos de operação:
 * Cache de Instruções
 
   * armazena as instruções
+
+---
+
+# Kernel
+
+> É o núcleo de um Sistema operacional, ele é a ponte entre o hardware e o software
+
+## Responsável por gerenciar:
+
+1. Processos
+
+Cria, gerencia e termina processos (programas em execução). Ele decide qual processo recebe tempo de CPU e em que ordem, garantindo que o sistema funcione de forma eficiente e justa.
+
+---
+
+2. Hardware
+
+Gerencia os recursos físicos do computador, como CPU, memória RAM e armazenamento. Ele aloca esses recursos para os processos conforme a necessidade e controla o acesso para evitar conflitos.
+
+---
+
+3.  Dispositivos
+
+Comunica-se com o hardware, como discos, impressoras, placas de vídeo e teclado, usando drivers.
+
+---
+
+> Um software nunca se comunica diretamente com o hardware e dispositivos, mas com o Kernel como intermediador dessa conversa
+
+---
+
+# Modos de Operação (Kernel vs User)
+
+> O processador alterna entre dois modos para garantir a segurança do sistema.
+
+---
+
+## User Mode (Modo Usuário)
+
+* **Onde os apps vivem:** Navegadores, editores de texto e códigos (Java, Python..) rodam aqui.
+* **Restrição:** O software não tem acesso direto ao hardware ou à memória de outros programas.
+* **Segurança:** Se um app trava no User Mode, o sistema continua rodando.
+
+## Kernel Mode (Modo Privilegiado)
+
+* **Poder total:** O Kernel tem acesso irrestrito ao hardware (CPU, RAM, Disco).
+* **Execução crítica:** Reservado para drivers e funções vitais do sistema.
+* **Risco:** Se ocorrer uma falha aqui, o sistema inteiro para (Kernel Panic ou Tela Azul).
+
+## System Calls (A Ponte)
+
+> Quando um programa em User Mode precisa de algo do hardware (como ler um arquivo ou enviar dados pela rede), ele faz uma System Call (Chamada de Sistema).
+
+1. O App solicita o recurso.
+2. O processador muda de **User Mode** para **Kernel Mode**.
+3. O Kernel executa a tarefa com segurança.
+4. O processador volta para **User Mode** e entrega o resultado ao App.
+
+---
+
+> A existência desses modos é o que separa um "App que fechou sozinho" de um "Computador que reiniciou".
+
+## Falha no User Mode (Crash de App)
+
+Quando uma aplicação tenta acessar um endereço de memória que não é dela ou executa uma instrução inválida, o processador nega o acesso e gera uma exceção.
+
+* **Resultado:** O Kernel detecta a violação, encerra apenas aquele processo (o famoso "Este programa parou de funcionar") e libera a memória que ele usava.
+* **O PC morre?** Não. O sistema continua estável porque o Kernel protegeu o resto do hardware.
+
+## Falha no Kernel Mode (Crash de Sistema)
+
+Como o Kernel Mode tem privilégios totais, não existe uma "entidade superior" para policiar suas ações. Se um driver de rede ou de vídeo cometer um erro crítico de memória aqui, o erro afeta o núcleo do sistema.
+
+* **Resultado:** O processador não consegue isolar o erro. Para evitar danos ao hardware ou corrupção de dados, o sistema operacional entra em um estado de parada de emergência.
+* **O PC morre?** Sim. É aqui que surgem a **Blue Screen of Death (BSOD)** no Windows ou o **Kernel Panic** no Linux/Mac.
 
 ---
 
